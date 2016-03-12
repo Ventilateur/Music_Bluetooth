@@ -1,126 +1,150 @@
+#include <SoftwareSerial.h>   
 
-int speakerPin = 5;
+#define RxD           6
+#define TxD           7
+#define SPEAKER_PIN   5
 
-int noteC4 = 262;
-int noteC4s = 277;
-int noteD4 = 294;
-int noteD4s = 311;
-int noteE4 = 330;
-int noteF4 = 349;
-int noteF4s = 370;
-int noteG4 = 392;
-int noteG4s = 415;
-int noteA4 = 440;
-int noteA4s = 466;
-int noteB4 = 494;
+#define NOTE_C4       262
+#define NOTE_C4s      277
+#define NOTE_D4       294
+#define NOTE_D4s      311
+#define NOTE_E4       330
+#define NOTE_F4       349
+#define NOTE_F4s      370
+#define NOTE_G4       392
+#define NOTE_G4s      415
+#define NOTE_A4       440
+#define NOTE_A4s      466
+#define NOTE_B4       494
 
-int noteC5 = 523;
-int noteC5s = 554;
-int noteD5 = 587;
-int noteD5s = 622;
-int noteE5 = 659;
-int noteF5 = 698;
-int noteF5s = 740;
-int noteG5 = 784;
-int noteG5s = 831;
-int noteA5 = 880;
-int noteA5s = 932;
-int noteB5 = 988;
+#define NOTE_C5       523
+#define NOTE_C5s      554
+#define NOTE_D5       587
+#define NOTE_D5s      622
+#define NOTE_E5       659
+#define NOTE_F5       698
+#define NOTE_F5s      740
+#define NOTE_G5       784
+#define NOTE_G5s      831
+#define NOTE_A5       880
+#define NOTE_A5s      932
+#define NOTE_B5       988
 
 int serialA;
 
+SoftwareSerial blueToothSerial(RxD,TxD);
+
 void setup() {
   Serial.begin(9600);
-  pinMode(speakerPin,OUTPUT);
+  pinMode(RxD, INPUT);
+  pinMode(TxD, OUTPUT);
+  pinMode(SPEAKER_PIN,OUTPUT);
+  setupBlueToothConnection();
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    serialA = Serial.read();
-  }
-  playNote(serialA);
+  int recvInt;
+  if(blueToothSerial.available()) {
+    recvInt = blueToothSerial.read();
+    Serial.print(recvInt);
+    playNote(recvInt);
+  } 
 }
 
 void playNote(int note) {
   switch (note) {
     case 1:
-    tone(speakerPin,noteC4);
+    tone(SPEAKER_PIN,NOTE_C4);
     break;
     case 2:
-    tone(speakerPin,noteC4s);
+    tone(SPEAKER_PIN,NOTE_C4s);
     break;
     case 3:
-    tone(speakerPin,noteD4);
+    tone(SPEAKER_PIN,NOTE_D4);
     break;
     case 4:
-    tone(speakerPin,noteD4s);
+    tone(SPEAKER_PIN,NOTE_D4s);
     break;
     case 5:
-    tone(speakerPin,noteE4);
+    tone(SPEAKER_PIN,NOTE_E4);
     break;
     case 6:
-    tone(speakerPin,noteF4);
+    tone(SPEAKER_PIN,NOTE_F4);
     break;
     case 7:
-    tone(speakerPin,noteF4s);
+    tone(SPEAKER_PIN,NOTE_F4s);
     break;
     case 8:
-    tone(speakerPin,noteG4);
+    tone(SPEAKER_PIN,NOTE_G4);
     break;
     case 9:
-    tone(speakerPin,noteG4s);
+    tone(SPEAKER_PIN,NOTE_G4s);
     break;
     case 10:
-    tone(speakerPin,noteA4);
+    tone(SPEAKER_PIN,NOTE_A4);
     break;
     case 11:
-    tone(speakerPin,noteA4s);
+    tone(SPEAKER_PIN,NOTE_A4s);
     break;
     case 12:
-    tone(speakerPin,noteB4);
+    tone(SPEAKER_PIN,NOTE_B4);
     break;
     case 13:
-    tone(speakerPin,noteC5);
+    tone(SPEAKER_PIN,NOTE_C5);
     break;
     case 14:
-    tone(speakerPin,noteC5s);
+    tone(SPEAKER_PIN,NOTE_C5s);
     break;
     case 15:
-    tone(speakerPin,noteD5);
+    tone(SPEAKER_PIN,NOTE_D5);
     break;
     case 16:
-    tone(speakerPin,noteD5s);
+    tone(SPEAKER_PIN,NOTE_D5s);
     break;
     case 17:
-    tone(speakerPin,noteE5);
+    tone(SPEAKER_PIN,NOTE_E5);
     break;
     case 18:
-    tone(speakerPin,noteF5);
+    tone(SPEAKER_PIN,NOTE_F5);
     break;
     case 19:
-    tone(speakerPin,noteF5s);
+    tone(SPEAKER_PIN,NOTE_F5s);
     break;
     case 20:
-    tone(speakerPin,noteG5);
+    tone(SPEAKER_PIN,NOTE_G5);
     break;
     case 21:
-    tone(speakerPin,noteG5s);
+    tone(SPEAKER_PIN,NOTE_G5s);
     break;
     case 22:
-    tone(speakerPin,noteA5);
+    tone(SPEAKER_PIN,NOTE_A5);
     break;
     case 23:
-    tone(speakerPin,noteA5s);
+    tone(SPEAKER_PIN,NOTE_A5s);
     break;
     case 24:
-    tone(speakerPin,noteB5);
+    tone(SPEAKER_PIN,NOTE_B5);
     break;
     default:
-    noTone(speakerPin);
+    noTone(SPEAKER_PIN);
   }
 }
 
-
-
+void setupBlueToothConnection() {  
+  
+  blueToothSerial.begin(9600);  
+  blueToothSerial.print("AT");
+  delay(400);
+  blueToothSerial.print("AT+DEFAULT");             // Restore all setup value to factory setup
+  delay(2000); 
+  blueToothSerial.print("AT+NAMESeeedBTSlave");    // set the bluetooth name as "SeeedBTSlave" ,the length of bluetooth name must less than 12 characters.
+  delay(400);
+  blueToothSerial.print("AT+PIN0000");             // set the pair code to connect 
+  delay(400);
+  blueToothSerial.print("AT+AUTH1");         
+  delay(400);   
+  blueToothSerial.flush();
+  
+}
 
 
