@@ -131,20 +131,7 @@ void playNote(int note) {
 }
 
 void setupBlueToothConnection() {  
-  
   blueToothSerial.begin(9600);  
-  blueToothSerial.print("AT");
-  delay(400);
-  blueToothSerial.print("AT+DEFAULT");             // Restore all setup value to factory setup
-  delay(2000); 
-  blueToothSerial.print("AT+NAMESeeedBTSlave");    // set the bluetooth name as "SeeedBTSlave" ,the length of bluetooth name must less than 12 characters.
-  delay(400);
-  blueToothSerial.print("AT+PIN0000");             // set the pair code to connect 
-  delay(400);
-  blueToothSerial.print("AT+AUTH1");         
-  delay(400);   
-  blueToothSerial.flush();
-  
 }
 
 
